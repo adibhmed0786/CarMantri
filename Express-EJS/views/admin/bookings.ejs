@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Bookings - Admin</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      h2 {
+        color: #22d3ee;
+        margin-bottom: 24px;
+      }
+      .admin-nav {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .admin-nav a {
+        padding: 10px 16px;
+        text-decoration: none;
+        color: #cbd5e1;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .admin-nav a.active {
+        background: #22d3ee;
+        color: #0f172a;
+        border-color: #22d3ee;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .filter-btn {
+        padding: 8px 14px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #1e293b;
+        color: #cbd5e1;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .filter-btn.active {
+        background: #22d3ee;
+        color: #0f172a;
+        border-color: #22d3ee;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th {
+        background: #334155;
+        padding: 12px;
+        text-align: left;
+        font-weight: 700;
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #334155;
+      }
+      tr:hover {
+        background: #2d3d50;
+      }
+      .status {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+      }
+      .status-pending {
+        background: #fbbf24;
+        color: #000;
+      }
+      .status-approved {
+        background: #10b981;
+        color: #fff;
+      }
+      .status-rejected {
+        background: #f87171;
+        color: #fff;
+      }
+      .status-completed {
+        background: #6366f1;
+        color: #fff;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+      button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .btn-approve {
+        background: #10b981;
+        color: #fff;
+      }
+      .btn-reject {
+        background: #f87171;
+        color: #fff;
+      }
+      .btn-complete {
+        background: #6366f1;
+        color: #fff;
+      }
+      .btn-call {
+        background: #0ea5e9;
+        color: #fff;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 500px;
+        width: 90%;
+      }
+      .modal-content h3 {
+        margin: 0 0 16px;
+        color: #22d3ee;
+      }
+      textarea {
+        width: 100%;
+        padding: 10px;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        color: #fff;
+        min-height: 100px;
+        resize: vertical;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .modal-buttons button {
+        flex: 1;
+        padding: 10px;
+      }
+      .btn-cancel {
+        background: #334155;
+        color: #cbd5e1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Manage Bookings</h2>
+      <div class="admin-nav">
+        <a href="/admin/dashboard?tab=add-service">Add Services</a>
+        <a href="/admin/dashboard?tab=all-services">All Services</a>
+        <a href="/admin/dashboard?tab=feedback-tab">Completed Reviews</a>
+        <a href="/admin/bookings" class="active">Bookings</a>
+      </div>
+      <div class="toolbar">
+        <button id="filter-all" class="filter-btn active" type="button">Active Bookings</button>
+        <button id="filter-completed" class="filter-btn" type="button">Completed Only</button>
+        <button id="filter-rejected" class="filter-btn" type="button">Rejected Only</button>
+      </div>
+      <table id="bookings-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Service</th>
+            <th>Date & Time</th>
+            <th>Vehicle</th>
+            <th>Contact No.</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-body">
+          <tr>
+            <td colspan="7" style="text-align: center">Loading bookings...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div id="status-modal" class="modal">
+      <div class="modal-content">
+        <h3 id="modal-title">Update Booking Status</h3>
+        <textarea
+          id="modal-notes"
+          placeholder="Add notes for user..."
+        ></textarea>
+        <div class="modal-buttons">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button
+            id="modal-confirm-btn"
+            style="background: #22d3ee; color: #0f172a"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentBookingId = null;
+      let currentStatus = null;
+      let allBookings = [];
+      let activeFilter = "all";
+
+      async function loadBookings() {
+        try {
+          const res = await fetch("/bookings/admin/all");
+          const bookings = await res.json();
+          allBookings = bookings;
+          applyFilterAndRender();
+        } catch (error) {
+          document.getElementById("bookings-body").innerHTML =
+            '<tr><td colspan="7" style="text-align: center; color: #f87171;">Failed to load bookings</td></tr>';
+        }
+      }
+
+      function applyFilterAndRender() {
+        const filtered =
+          activeFilter === "completed"
+            ? allBookings.filter((booking) => booking.status === "completed")
+            : activeFilter === "rejected"
+            ? allBookings.filter((booking) => booking.status === "rejected")
+            : allBookings.filter(
+                (booking) =>
+                  booking.status !== "completed" && booking.status !== "rejected",
+              );
+        displayBookings(filtered);
+      }
+
+      function displayBookings(bookings) {
+        const tbody = document.getElementById("bookings-body");
+        if (bookings.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align: center;">No bookings yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = bookings
+          .map(
+            (booking) => `
+          <tr>
+            <td>${booking.user.name}</td>
+            <td>${booking.serviceDetails.name}</td>
+            <td>${new Date(booking.bookingDate).toLocaleDateString()} - ${booking.timeSlot}</td>
+            <td>${booking.vehicleType.toUpperCase()}<br/><small style="color: #94a3b8;">${booking.vehicleNumber}</small></td>
+            <td>${booking.contactNumber || '-'}</td>
+            <td><span class="status status-${booking.status}">${booking.status}</span></td>
+            <td>
+              ${
+                booking.status === "completed"
+                  ? `<div class="actions">
+                      ${booking.contactNumber ? `<a href="tel:${booking.contactNumber}" class="btn-call" style="text-decoration:none; display:inline-flex; align-items:center; padding:8px 16px; border-radius:6px; font-weight:600; font-size:12px;">Call</a>` : '<span style="color:#94a3b8; font-size:12px;">No contact number</span>'}
+                    </div>`
+                  : booking.status === "approved"
+                  ? `<div class="actions">
+                      ${booking.contactNumber ? `<a href="tel:${booking.contactNumber}" class="btn-call" style="text-decoration:none; display:inline-flex; align-items:center; padding:8px 16px; border-radius:6px; font-weight:600; font-size:12px;">Call</a>` : '<span style="color:#94a3b8; font-size:12px;">No contact number</span>'}
+                      <button class="btn-reject" onclick="openStatusModal('${booking._id}', 'rejected')">Reject</button>
+                      <button class="btn-complete" onclick="openStatusModal('${booking._id}', 'completed')">Complete</button>
+                    </div>`
+                  : booking.status === "rejected"
+                  ? `<div class="actions">
+                      ${booking.contactNumber ? `<a href="tel:${booking.contactNumber}" class="btn-call" style="text-decoration:none; display:inline-flex; align-items:center; padding:8px 16px; border-radius:6px; font-weight:600; font-size:12px;">Call</a>` : '<span style="color:#94a3b8; font-size:12px;">No contact number</span>'}
+                      <button class="btn-approve" onclick="openStatusModal('${booking._id}', 'approved')">Approve</button>
+                    </div>`
+                  : `<div class="actions">
+                      <button class="btn-approve" onclick="openStatusModal('${booking._id}', 'approved')">Approve</button>
+                      <button class="btn-reject" onclick="openStatusModal('${booking._id}', 'rejected')">Reject</button>
+                      <button class="btn-complete" onclick="openStatusModal('${booking._id}', 'completed')">Complete</button>
+                    </div>`
+              }
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
+      }
+
+      function openStatusModal(bookingId, status) {
+        currentBookingId = bookingId;
+        currentStatus = status;
+        document.getElementById("modal-title").textContent =
+          `Mark as ${status.toUpperCase()}`;
+        document.getElementById("modal-notes").value = "";
+        document.getElementById("status-modal").classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("status-modal").classList.remove("active");
+        currentBookingId = null;
+        currentStatus = null;
+      }
+
+      document
+        .getElementById("modal-confirm-btn")
+        .addEventListener("click", async () => {
+          const notes = document.getElementById("modal-notes").value;
+
+          try {
+            const res = await fetch(`/bookings/${currentBookingId}/status`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                status: currentStatus,
+                adminNotes: notes,
+              }),
+            });
+
+            if (res.ok) {
+              closeModal();
+              loadBookings();
+            }
+          } catch (error) {
+            alert("Failed to update booking");
+          }
+        });
+
+      document.getElementById("status-modal").addEventListener("click", (e) => {
+        if (e.target.id === "status-modal") {
+          closeModal();
+        }
+      });
+
+      document.getElementById("filter-all").addEventListener("click", () => {
+        activeFilter = "all";
+        document.getElementById("filter-all").classList.add("active");
+        document.getElementById("filter-completed").classList.remove("active");
+        document.getElementById("filter-rejected").classList.remove("active");
+        applyFilterAndRender();
+      });
+
+      document.getElementById("filter-completed").addEventListener("click", () => {
+        activeFilter = "completed";
+        document.getElementById("filter-completed").classList.add("active");
+        document.getElementById("filter-all").classList.remove("active");
+        document.getElementById("filter-rejected").classList.remove("active");
+        applyFilterAndRender();
+      });
+
+      document.getElementById("filter-rejected").addEventListener("click", () => {
+        activeFilter = "rejected";
+        document.getElementById("filter-rejected").classList.add("active");
+        document.getElementById("filter-all").classList.remove("active");
+        document.getElementById("filter-completed").classList.remove("active");
+        applyFilterAndRender();
+      });
+
+      loadBookings();
+    </script>
+  </body>
+</html>

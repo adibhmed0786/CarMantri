@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .bookings-container {
+        max-width: 1000px;
+        margin: 40px auto;
+      }
+      .dashboard-tabs {
+        display: flex;
+        gap: 10px;
+        border-bottom: 1px solid #334155;
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+      }
+      .dashboard-tabs button {
+        background: transparent;
+        color: #cbd5e1;
+        border: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 0;
+        padding: 10px 14px;
+      }
+      .dashboard-tabs button.active {
+        color: #22d3ee;
+        border-bottom-color: #22d3ee;
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .bookings-container h2 {
+        color: #22d3ee;
+        margin-bottom: 24px;
+      }
+      .booking-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 16px;
+      }
+      .booking-title {
+        color: #22d3ee;
+        margin: 0 0 8px;
+      }
+      .booking-date {
+        color: #94a3b8;
+        font-size: 14px;
+        margin: 0;
+      }
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .status-pending {
+        background: #fbbf24;
+        color: #000;
+      }
+      .status-approved {
+        background: #10b981;
+        color: #fff;
+      }
+      .status-rejected {
+        background: #f87171;
+        color: #fff;
+      }
+      .status-completed {
+        background: #6366f1;
+        color: #fff;
+      }
+      .booking-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+        padding: 16px 0;
+        border-top: 1px solid #334155;
+        border-bottom: 1px solid #334155;
+      }
+      .detail {
+        color: #cbd5e1;
+      }
+      .detail label {
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+      .detail p {
+        margin: 4px 0 0;
+        font-weight: 600;
+      }
+      .admin-notes {
+        background: #0f172a;
+        border-left: 3px solid #22d3ee;
+        padding: 12px;
+        margin-top: 12px;
+        border-radius: 4px;
+        color: #cbd5e1;
+        font-size: 14px;
+      }
+      .booking-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .btn-cancel {
+        background: #f87171;
+        color: #fff;
+      }
+      .btn-cancel:hover {
+        background: #ef4444;
+      }
+      .empty-message {
+        text-align: center;
+        padding: 40px;
+        color: #94a3b8;
+      }
+      .feedback-card {
+        background: #111827;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+      .feedback-card h4 {
+        margin: 0 0 8px;
+        color: #f8fafc;
+      }
+      .feedback-meta {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+      .feedback-form {
+        display: grid;
+        gap: 10px;
+      }
+      .feedback-form select,
+      .feedback-form textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        background: #1e293b;
+        color: #fff;
+      }
+      .feedback-form textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+      .btn-feedback {
+        background: #22d3ee;
+        color: #0f172a;
+        width: fit-content;
+      }
+      .btn-feedback:hover {
+        background: #67e8f9;
+      }
+      .feedback-status {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <div class="bookings-container">
+      <h2>Customer Dashboard</h2>
+
+      <div class="dashboard-tabs">
+        <button type="button" class="tab-btn active" data-tab="bookings-tab">My Bookings</button>
+        <button type="button" class="tab-btn" data-tab="feedback-tab">Feedback</button>
+      </div>
+
+      <div id="bookings-tab" class="tab-panel active">
+      <h2 style="margin-bottom: 16px;">My Bookings</h2>
+
+      <% if (bookings.length === 0) { %>
+      <div class="empty-message">
+        <p>You haven't booked any services yet.</p>
+        <a href="/" class="btn btn-primary" style="display: inline-block; padding: 10px 20px;">Browse Services</a>
+      </div>
+      <% } else { %>
+        <% bookings.forEach(booking => { %>
+        <div class="booking-card">
+          <div class="booking-header">
+            <div>
+              <h3 class="booking-title"><%= booking.serviceDetails.name %></h3>
+              <p class="booking-date">Booked on <%= new Date(booking.createdAt).toLocaleDateString() %></p>
+            </div>
+            <span class="status-badge status-<%= booking.status %>">
+              <%= booking.status %>
+            </span>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail">
+              <label>Booking Date</label>
+              <p><%= new Date(booking.bookingDate).toLocaleDateString() %></p>
+            </div>
+            <div class="detail">
+              <label>Time Slot</label>
+              <p><%= booking.timeSlot %></p>
+            </div>
+            <div class="detail">
+              <label>Vehicle</label>
+              <p><%= booking.vehicleType.toUpperCase() %> - <%= booking.vehicleNumber %></p>
+            </div>
+            <div class="detail">
+              <label>Contact Number</label>
+              <p><%= booking.contactNumber || '-' %></p>
+            </div>
+          </div>
+
+          <% if (booking.description) { %>
+          <div class="detail">
+            <label>Notes</label>
+            <p><%= booking.description %></p>
+          </div>
+          <% } %>
+
+          <% if (booking.adminNotes) { %>
+          <div class="admin-notes">
+            <strong>Admin Notes:</strong> <%= booking.adminNotes %>
+          </div>
+          <% } %>
+
+          <div class="booking-actions">
+            <% if (booking.status === 'pending' || booking.status === 'approved') { %>
+            <button class="btn-cancel" onclick="cancelBooking('<%= booking._id %>')">
+              Cancel Booking
+            </button>
+            <% } %>
+          </div>
+        </div>
+        <% }); %>
+      <% } %>
+      </div>
+
+      <div id="feedback-tab" class="tab-panel">
+        <h2 style="margin-bottom: 16px;">Give Feedback</h2>
+        <% const completedBookings = bookings.filter((booking) => booking.status === 'completed'); %>
+        <% if (completedBookings.length === 0) { %>
+          <div class="empty-message">
+            <p>Feedback will be available after your services are marked completed.</p>
+          </div>
+        <% } else { %>
+          <% completedBookings.forEach((booking) => { %>
+            <div class="feedback-card">
+              <h4><%= booking.serviceDetails.name %></h4>
+              <p class="feedback-meta">Service date: <%= new Date(booking.bookingDate).toLocaleDateString() %></p>
+              <form class="feedback-form" onsubmit="submitFeedback(event, '<%= booking._id %>')">
+                <select name="rating" required>
+                  <option value="">Select Rating</option>
+                  <option value="5" <%= booking.feedbackRating === 5 ? 'selected' : '' %>>5 - Excellent</option>
+                  <option value="4" <%= booking.feedbackRating === 4 ? 'selected' : '' %>>4 - Good</option>
+                  <option value="3" <%= booking.feedbackRating === 3 ? 'selected' : '' %>>3 - Average</option>
+                  <option value="2" <%= booking.feedbackRating === 2 ? 'selected' : '' %>>2 - Poor</option>
+                  <option value="1" <%= booking.feedbackRating === 1 ? 'selected' : '' %>>1 - Very Poor</option>
+                </select>
+                <textarea name="comment" placeholder="Share your experience..."><%= booking.feedbackComment || '' %></textarea>
+                <button type="submit" class="btn-feedback">
+                  <%= booking.feedbackSubmittedAt ? 'Update Feedback' : 'Submit Feedback' %>
+                </button>
+                <p class="feedback-status" id="feedback-status-<%= booking._id %>">
+                  <%= booking.feedbackSubmittedAt ? 'Feedback submitted on ' + new Date(booking.feedbackSubmittedAt).toLocaleDateString() : '' %>
+                </p>
+              </form>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+
+    <%- include("../partials/loginModal") %>
+
+    <script>
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const tabId = btn.getAttribute('data-tab');
+
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+
+          btn.classList.add('active');
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+
+      async function cancelBooking(id) {
+        if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+        try {
+          const res = await fetch(`/bookings/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            window.location.reload();
+          } else {
+            alert('Failed to cancel booking');
+          }
+        } catch (error) {
+          alert('Something went wrong');
+        }
+      }
+
+      async function submitFeedback(event, bookingId) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const rating = formData.get('rating');
+        const comment = formData.get('comment');
+        const statusEl = document.getElementById(`feedback-status-${bookingId}`);
+
+        try {
+          const res = await fetch(`/bookings/${bookingId}/feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rating, comment }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            statusEl.style.color = '#f87171';
+            statusEl.textContent = data.error || 'Failed to submit feedback';
+            return;
+          }
+
+          statusEl.style.color = '#22d3ee';
+          statusEl.textContent = 'Feedback submitted successfully';
+        } catch (error) {
+          statusEl.style.color = '#f87171';
+          statusEl.textContent = 'Something went wrong';
+        }
+      }
+    </script>
+  </body>
+</html>

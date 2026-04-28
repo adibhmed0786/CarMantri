@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Sign Up</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <section class="auth-section">
+      <div class="container auth-container">
+        <div class="auth-card">
+          <p class="auth-kicker">JOIN NOW</p>
+          <h2>User Sign Up</h2>
+          <p class="auth-subtitle">Create your account to book services and manage everything in one place.</p>
+
+        <% if (error) { %>
+        <p class="auth-error"><%= error %></p>
+        <% } %>
+
+          <form action="/signup" method="POST" class="auth-form">
+            <input type="text" name="name" placeholder="Full Name" required />
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit" class="btn auth-submit-btn">Sign Up</button>
+          </form>
+
+          <p class="auth-switch">Already have account? <a href="/login">Login</a></p>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

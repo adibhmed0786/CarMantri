@@ -1,0 +1,121 @@
+<header data-logged-in="<%= user ? 'true' : 'false' %>">
+  <nav class="navbar">
+    <a href="/" class="logo brand-logo" aria-label="Car Mantri">
+      <span class="brand-logo-mark">CM</span>
+      <span class="brand-logo-text">
+        <span class="brand-logo-car">Car</span>
+        <span class="brand-logo-mantri">Mantri</span>
+      </span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#services-section">Services</a></li>
+      <li><a href="/#about-section">About</a></li>
+      <li>
+        <a href="/user/bookings" id="navbar-bookings-btn" style="color: black; text-decoration: none; font-weight: 600;">
+          Booked Services
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-protected-link btn btn-nav" data-url="/contact" style="color: white; background: rgb(55, 46, 46);">Contact</a>
+      </li>
+      <% if (!user) { %>
+      <li>
+        <a href="#" id="navbar-login-btn" class="btn btn-nav" style="display: inline-flex; align-items: center; gap: 8px; background: black; color: white;">
+          <span style="font-size: 16px;">👤</span>
+          Login / Sign up
+        </a>
+      </li>
+      <% } else { %>
+      <li style="position: relative;">
+        <button id="user-avatar-btn" style="width: 36px; height: 36px; border-radius: 50%; background: #dc2626; color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 16px;">
+          <%= (user.name || "U").trim().charAt(0).toUpperCase() %>
+        </button>
+        <div id="user-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: #1e293b; border: 1px solid #334155; border-radius: 8px; min-width: 140px; z-index: 1000;">
+          <p style="padding: 10px 14px; margin: 0; color: #cbd5e1; font-size: 14px;"><%= user.name %></p>
+          <form action="/logout" method="POST" style="margin: 0;">
+            <button type="submit" style="width: 100%; padding: 10px 14px; background: transparent; border: none; text-align: left; color: #f87171; cursor: pointer; border-top: 1px solid #334155;">Logout</button>
+          </form>
+        </div>
+      </li>
+      <% } %>
+    </ul>
+    <button class="nav-menu-toggle" type="button" aria-label="Open menu">
+      <img src="/menu.png" alt="Menu" class="nav-menu-icon" />
+    </button>
+  </nav>
+</header>
+
+<script>
+  const navToggle = document.querySelector(".nav-menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
+  const isLoggedIn = document.querySelector("header")?.dataset.loggedIn === "true";
+
+  navToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("nav-links-active");
+  });
+
+  // Protected links handling
+  document.querySelectorAll(".nav-protected-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!isLoggedIn) {
+        openLoginModal();
+      } else {
+        window.location.href = link.getAttribute("data-url");
+      }
+    });
+  });
+
+  // Login button
+  const loginBtn = document.getElementById("navbar-login-btn");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLoginModal();
+    });
+  }
+
+  const bookingsBtn = document.getElementById("navbar-bookings-btn");
+  if (bookingsBtn) {
+    bookingsBtn.addEventListener("click", (e) => {
+      if (!isLoggedIn) {
+        e.preventDefault();
+        openLoginModal();
+      }
+    });
+  }
+
+  document.querySelectorAll(".service-booking-link[data-requires-auth='true']").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      if (!isLoggedIn) {
+        e.preventDefault();
+        openLoginModal();
+      }
+    });
+  });
+
+  // User avatar dropdown
+  const avatarBtn = document.getElementById("user-avatar-btn");
+  const userDropdown = document.getElementById("user-dropdown");
+  if (avatarBtn && userDropdown) {
+    avatarBtn.addEventListener("click", () => {
+      userDropdown.style.display =
+        userDropdown.style.display === "none" ? "block" : "none";
+    });
+    document.addEventListener("click", (e) => {
+      if (e.target !== avatarBtn && !userDropdown.contains(e.target)) {
+        userDropdown.style.display = "none";
+      }
+    });
+  }
+
+  function openLoginModal() {
+    const modal = document.getElementById("login-modal");
+    if (modal) {
+      modal.style.display = "flex";
+    } else {
+      window.location.href = "/login";
+    }
+  }
+</script>

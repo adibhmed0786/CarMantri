@@ -1,0 +1,65 @@
+<div class="post-grid">
+  <% if (rows && rows.length) { %>
+    <% rows.forEach((item, index) => { %>
+      <% 
+        const fallbackImage = "https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=640&q=70";
+        let imageUrl = item.image || fallbackImage;
+        let optimizedImageUrl = imageUrl;
+
+        // Serve lighter image payload for card-sized previews.
+        if (typeof imageUrl === "string" && imageUrl.includes("images.unsplash.com")) {
+          if (imageUrl.includes("?")) {
+            imageUrl = imageUrl.replace(/([?&])w=\d+/i, "$1w=640");
+            imageUrl = imageUrl.replace(/([?&])q=\d+/i, "$1q=70");
+            if (!/[?&]auto=/.test(imageUrl)) imageUrl += "&auto=format";
+            if (!/[?&]fit=/.test(imageUrl)) imageUrl += "&fit=crop";
+            if (!/[?&]w=/.test(imageUrl)) imageUrl += "&w=640";
+            if (!/[?&]q=/.test(imageUrl)) imageUrl += "&q=70";
+          } else {
+            imageUrl += "?auto=format&fit=crop&w=640&q=70";
+          }
+        }
+
+        // Route remote images through a thumbnail CDN for faster decode/load.
+        if (typeof imageUrl === "string" && /^https?:\/\//i.test(imageUrl)) {
+          const sourceForCdn = imageUrl.replace(/^https?:\/\//i, "");
+          optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(sourceForCdn)}&w=640&h=420&fit=cover&q=60&output=webp`;
+        }
+      %>
+      <article class="post-card">
+        <img
+          src="<%= optimizedImageUrl %>"
+          alt="<%= item.title || item.name || 'Service image' %>"
+          class="post-image"
+          width="640"
+          height="420"
+          loading="<%= index < 8 ? 'eager' : 'lazy' %>"
+          decoding="async"
+          fetchpriority="<%= index < 3 ? 'high' : (index < 8 ? 'auto' : 'low') %>"
+          onerror="this.onerror=null;this.src='<%= imageUrl %>';this.onerror=function(){this.onerror=null;this.src='https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=640&q=70';};"
+        />
+
+        <div class="post-content">
+          <p class="post-category"><%= item.category || 'Garage Service' %></p>
+          <h3><%= item.title || item.name %></h3>
+          <% if (item.price !== undefined && item.price !== null) { %>
+            <p class="post-category" style="color: #dc2626; margin-bottom: 8px;">INR <%= Number(item.price).toLocaleString('en-IN') %></p>
+          <% } %>
+          <p class="post-desc"><%= item.description %></p>
+        </div>
+
+        <div class="post-meta">
+          <span><%= item.date || '7 Feb 2023' %></span>
+          <span><%= item.views || 55 %> Views</span>
+          <% if (item._id) { %>
+            <a href="/bookservice/<%= item._id %>" class="post-link post-book-btn service-booking-link" data-requires-auth="true">Book Now</a>
+          <% } else { %>
+            <a href="<%= item.href || '/bookservice' %>" class="post-link post-book-btn"><%= item.link || 'Book Now' %></a>
+          <% } %>
+        </div>
+      </article>
+    <% }); %>
+  <% } else { %>
+    <p class="section-text">No data available.</p>
+  <% } %>
+</div>

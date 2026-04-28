@@ -1,0 +1,15 @@
+# Dependencies
+Express-EJS/node_modules/
+
+# Environment files
+Express-EJS/.env
+
+# OS / archive artifacts
+__MACOSX/
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

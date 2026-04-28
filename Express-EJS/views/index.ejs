@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Car Mantri</title>
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="description" content="Car Mantri - Trusted Car Repair & Maintenance. Fast, reliable service with certified mechanics, transparent pricing, and same-day support. Book your car service online now!" />
+  </head>
+  <body>
+    <%- include("partials/navbar") %>
+
+    <section class="hero-full" id="home">
+      <div class="hero-content" style="background-color: rgba(255, 255, 255, 0.591);">
+        <span class="badge" style="background-color: rgb(212, 0, 0); color: white;">Trusted Garage Experts</span>
+        <h1>Fast, Reliable Car Repair & Maintenance</h1>
+        <p>
+          Keep your vehicle in top condition with certified mechanics,
+          transparent pricing, and same-day service support.
+        </p>
+        <a href="/bookservice" class="btn btn-primary" style="display: table; margin: 20px auto 0; background:black;">BookService</a>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2 >Why Choose Us</h2>
+        <p class="section-text"> We are a trusted local garage team focused on high-quality car service, honest pricing, and fast delivery. Our technicians are certified and experienced with all major vehicle brands.
+        </p>
+        <%- include("partials/table", { rows: features }) %>
+      </div>
+    </section>
+    <section id="services-section">
+      <div class="container">
+        <h2>Our Services</h2>
+        <p class="section-text">
+          Choose your required service and book instantly.
+        </p>
+        <%- include("partials/table", { rows: services }) %>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <h2>What Our <span style="color: red;">Customers Say</span></h2>
+        <p class="section-text" style="color: rgb(0, 0, 0);">
+          Real completed reviews from customers who trust our garage services.
+        </p>
+        <%- include("partials/testimonial", { feedback: publicFeedback }) %>
+      </div>
+    </section>
+    <section id="about-section">
+      <div class="container">
+        <h2>About Us</h2>
+        <%- include("partials/about") %>
+      </div>
+    </section>
+
+    <%- include("partials/footer") %>
+    <%- include("partials/loginModal") %>
+  </body>
+</html>

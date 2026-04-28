@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Form</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .booking-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 32px;
+      }
+      .booking-container h2 {
+        color: #22d3ee;
+        margin-bottom: 24px;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      label {
+        display: block;
+        color: #cbd5e1;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #22d3ee;
+        color: #0f172a;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background: #67e8f9;
+      }
+      .message {
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 16px;
+        display: none;
+      }
+      .message.success {
+        background: #10b981;
+        color: #fff;
+        display: block;
+      }
+      .message.error {
+        background: #f87171;
+        color: #fff;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <div class="booking-container">
+      <h2>Book <%= serviceName %></h2>
+
+      <form id="booking-form">
+        <input type="hidden" id="service-id" value="<%= serviceId %>" />
+
+        <div class="form-group">
+          <label for="booking-date">Preferred Date</label>
+          <input type="date" id="booking-date" required min="<%= minDate %>" />
+        </div>
+
+        <div class="form-group">
+          <label for="time-slot">Time Slot</label>
+          <select id="time-slot" required>
+            <option value="">Select a time slot</option>
+            <option value="09:00-11:00">09:00 AM - 11:00 AM</option>
+            <option value="11:00-13:00">11:00 AM - 1:00 PM</option>
+            <option value="14:00-16:00">2:00 PM - 4:00 PM</option>
+            <option value="16:00-18:00">4:00 PM - 6:00 PM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="vehicle-type">Vehicle Type</label>
+          <select id="vehicle-type" required>
+            <option value="">Select vehicle type</option>
+            <option value="sedan">Sedan</option>
+            <option value="suv">SUV</option>
+            <option value="hatchback">Hatchback</option>
+            <option value="truck">Truck</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="vehicle-number">Vehicle Registration Number</label>
+          <input
+            type="text"
+            id="vehicle-number"
+            placeholder="e.g., DL-01-AB-1234"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="contact-number">Contact Number</label>
+          <input
+            type="tel"
+            id="contact-number"
+            placeholder="e.g., 9876543210"
+            inputmode="numeric"
+            pattern="[0-9]{10}"
+            maxlength="10"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Additional Notes (Optional)</label>
+          <textarea
+            id="description"
+            placeholder="Any special requirements or issues..."
+          ></textarea>
+        </div>
+
+        <button type="submit">Confirm Booking</button>
+        <div id="message" class="message"></div>
+      </form>
+    </div>
+
+    <%- include("../partials/loginModal") %>
+
+    <script>
+      // Set minimum date to today
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("booking-date").setAttribute("min", today);
+
+      const contactNumberInput = document.getElementById("contact-number");
+      contactNumberInput.addEventListener("input", () => {
+        contactNumberInput.value = contactNumberInput.value
+          .replace(/\D/g, "")
+          .slice(0, 10);
+      });
+
+      document
+        .getElementById("booking-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const serviceId = document.getElementById("service-id").value;
+          const bookingDate = document.getElementById("booking-date").value;
+          const timeSlot = document.getElementById("time-slot").value;
+          const vehicleType = document.getElementById("vehicle-type").value;
+          const vehicleNumber = document.getElementById("vehicle-number").value;
+          const contactNumber = document.getElementById("contact-number").value;
+          const description = document.getElementById("description").value;
+          const messageEl = document.getElementById("message");
+
+          if (!/^\d{10}$/.test(contactNumber)) {
+            messageEl.classList.remove("success");
+            messageEl.classList.add("error");
+            messageEl.textContent = "✗ Contact number must be exactly 10 digits";
+            return;
+          }
+
+          try {
+            const res = await fetch("/bookings", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                serviceId,
+                bookingDate,
+                timeSlot,
+                vehicleType,
+                vehicleNumber,
+                contactNumber,
+                description,
+              }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              messageEl.classList.remove("error");
+              messageEl.classList.add("success");
+              messageEl.textContent = "✓ Booking confirmed! Redirecting...";
+              setTimeout(() => {
+                window.location.href = "/user/bookings";
+              }, 2000);
+            } else {
+              messageEl.classList.remove("success");
+              messageEl.classList.add("error");
+              messageEl.textContent = "✗ " + (data.error || "Booking failed");
+            }
+          } catch (error) {
+            messageEl.classList.remove("success");
+            messageEl.classList.add("error");
+            messageEl.textContent = "✗ Something went wrong";
+          }
+        });
+    </script>
+  </body>
+</html>

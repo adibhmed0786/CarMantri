@@ -1,0 +1,103 @@
+<!-- Login Modal -->
+<div id="login-modal" class="auth-modal-overlay">
+  <div class="auth-modal-card">
+    <div class="auth-modal-head">
+      <h2>Login / Sign Up</h2>
+      <button id="close-modal-btn" class="auth-modal-close-btn">
+        &times;
+      </button>
+    </div>
+
+    <form id="modal-login-form" class="auth-form auth-modal-form">
+      <input
+        type="email"
+        id="modal-email"
+        name="email"
+        placeholder="Email"
+        required
+        class="auth-modal-input"
+      />
+      <input
+        type="password"
+        id="modal-password"
+        name="password"
+        placeholder="Password"
+        required
+        class="auth-modal-input"
+      />
+      <div class="auth-option-row auth-modal-options">
+        <label class="auth-remember-label" for="modal-remember-me">
+          <input type="checkbox" id="modal-remember-me" name="rememberMe" />
+          Remember me
+        </label>
+        <a href="/forgot-password" class="auth-inline-link">Forgot Password?</a>
+      </div>
+      <p id="modal-error" class="auth-modal-error"></p>
+      <button type="submit" class="btn auth-submit-btn auth-modal-submit-btn">
+        Login
+      </button>
+    </form>
+
+    <p class="auth-modal-switch">
+      New user?
+      <a href="/signup">Sign up here</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  const loginModal = document.getElementById("login-modal");
+  const closeModalBtn = document.getElementById("close-modal-btn");
+  const modalLoginForm = document.getElementById("modal-login-form");
+  const modalErrorMsg = document.getElementById("modal-error");
+
+  function closeLoginModal() {
+    loginModal.classList.remove("is-open");
+  }
+
+  closeModalBtn.addEventListener("click", () => {
+    closeLoginModal();
+  });
+
+  loginModal.addEventListener("click", (e) => {
+    if (e.target === loginModal) {
+      closeLoginModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && loginModal.classList.contains("is-open")) {
+      closeLoginModal();
+    }
+  });
+
+  modalLoginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("modal-email").value;
+    const password = document.getElementById("modal-password").value;
+    const rememberMe = document.getElementById("modal-remember-me").checked;
+
+    try {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        const data = await res.json();
+        modalErrorMsg.textContent = data.error || "Login failed";
+        modalErrorMsg.style.display = "block";
+      }
+    } catch (error) {
+      modalErrorMsg.textContent = "Something went wrong";
+      modalErrorMsg.style.display = "block";
+    }
+  });
+
+  window.openLoginModal = function () {
+    loginModal.classList.add("is-open");
+  };
+</script>

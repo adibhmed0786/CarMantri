@@ -1,0 +1,110 @@
+<% const feedbackItems = Array.isArray(feedback) ? feedback : []; %>
+<% if (feedbackItems.length) { %>
+  <div class="testimonial-grid">
+    <% feedbackItems.forEach((item) => {
+      const userName = item.user?.name || "Verified Customer";
+      const serviceName = item.service?.name || item.serviceDetails?.name || "Service";
+      const rating = Math.max(1, Math.min(5, Number(item.feedbackRating || 0)));
+      const starText = "★".repeat(rating) + "☆".repeat(5 - rating);
+      const initials = userName
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("") || "VC";
+      const comment = item.feedbackComment || "This customer rated the service but did not leave a written comment.";
+      const dateText = item.feedbackSubmittedAt
+        ? new Date(item.feedbackSubmittedAt).toLocaleDateString()
+        : "Recently";
+    %>
+      <article class="testimonial-card">
+        <p>"<%= comment %>"</p>
+        <div class="testimonial-user">
+          <div class="testimonial-avatar testimonial-avatar--initials" aria-hidden="true"><%= initials %></div>
+          <div class="testimonial-meta">
+            <h4><%= userName %></h4>
+            <span>
+              <%= serviceName %> ·
+              <strong class="testimonial-rating-stars" aria-label="<%= rating %> out of 5 stars"><%= starText %></strong>
+              (<%= rating %>/5) · <%= dateText %>
+            </span>
+          </div>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="testimonial-grid">
+    <article class="testimonial-card">
+      <p>
+        "Very professional team. They fixed my brake issue in one day and
+        explained everything clearly. Honest pricing and great service."
+      </p>
+      <div class="testimonial-user">
+        <img
+          class="testimonial-avatar"
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="Ahsan Khan"
+        />
+        <div class="testimonial-meta">
+          <h4>Ahsan Khan</h4>
+          <span>Car Owner</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="testimonial-card">
+      <p>
+        "Booked online and got instant confirmation. Oil change, wheel alignment,
+        and full checkup done perfectly. Highly recommended."
+      </p>
+      <div class="testimonial-user">
+        <img
+          class="testimonial-avatar"
+          src="https://randomuser.me/api/portraits/women/44.jpg"
+          alt="Sana Ali"
+        />
+        <div class="testimonial-meta">
+          <h4>Sana Ali</h4>
+          <span>Regular Customer</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="testimonial-card">
+      <p>
+        "My car had an engine warning light. Their diagnostics were quick and the
+        repair was done at a fair cost. Excellent customer support."
+      </p>
+      <div class="testimonial-user">
+        <img
+          class="testimonial-avatar"
+          src="https://randomuser.me/api/portraits/men/59.jpg"
+          alt="Rehan Siddiqui"
+        />
+        <div class="testimonial-meta">
+          <h4>Rehan Siddiqui</h4>
+          <span>Business Client</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="testimonial-card">
+      <p>
+        "Best garage experience so far. Clean workspace, skilled mechanics, and
+        on-time delivery. I will definitely come back again."
+      </p>
+      <div class="testimonial-user">
+        <img
+          class="testimonial-avatar"
+          src="https://randomuser.me/api/portraits/women/68.jpg"
+          alt="Hira Noor"
+        />
+        <div class="testimonial-meta">
+          <h4>Hira Noor</h4>
+          <span>Verified Customer</span>
+        </div>
+      </div>
+    </article>
+  </div>
+<% } %>

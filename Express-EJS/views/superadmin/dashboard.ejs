@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Super Admin Dashboard</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
+      .container { max-width: 1200px; margin: 0 auto; }
+      .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+      .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+      input, button { padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+      input { width: 100%; background: #0f172a; color: white; margin-top: 16px; }
+      .grid { display: grid; gap: 28px; grid-template-columns: 1fr 1fr 1fr; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 10px; border-bottom: 1px solid #334155; }
+      .btn { background: #22d3ee; color: #0f172a; font-weight: 700; cursor: pointer; }
+      .danger { background: #f87171; color: #fff; border: none; cursor: pointer; }
+      .msg-success { color: #22c55e; margin: 10px 0; }
+      .msg-error { color: #f87171; margin: 10px 0; }
+
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; gap: 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top">
+        <h2>Super Admin Dashboard</h2>
+        <form action="/superadmin/logout" method="POST">
+          <button class="danger" type="submit">Logout</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Generate Admin Login Credentials</h3>
+        <% if (error) { %><p class="msg-error"><%= error %></p><% } %>
+        <% if (success) { %><p class="msg-success"><%= success %></p><% } %>
+        <form action="/superadmin/admins" method="POST">
+          <div class="grid">
+            <input type="text" name="name" placeholder="Admin name" required />
+            <input type="email" name="email" placeholder="Admin email" required />
+            <input type="text" name="password" placeholder="Admin password" required />
+          </div>
+          <button class="btn" type="submit" style="margin-top: 12px;">Create Admin</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Manage All Admins</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (admins.length === 0) { %>
+            <tr><td colspan="5">No admins created yet.</td></tr>
+            <% } %>
+            <% admins.forEach((a) => { %>
+            <tr>
+              <td><%= a.name %></td>
+              <td><%= a.email %></td>
+              <td><%= a.role %></td>
+              <td><%= new Date(a.createdAt).toLocaleDateString() %></td>
+              <td>
+                <form action="/superadmin/admins/<%= a._id %>/delete" method="POST" onsubmit="return confirm('Delete this admin?')">
+                  <button type="submit" class="danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

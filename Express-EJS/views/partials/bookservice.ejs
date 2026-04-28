@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Service - Car Mantri</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include("partials/navbar") %>
+
+    <section>
+      <div class="container">
+        <h2>Book Your Service</h2>
+        <p class="section-text">
+          Submit your details and our team will confirm your slot quickly.
+        </p>
+
+        <div class="book-card">
+          <form>
+            <input type="text" placeholder="Your Name" required />
+            <input type="tel" placeholder="Phone Number" required />
+            <select required>
+              <option value="">Select Service</option>
+              <option>Oil Change</option>
+              <option>Engine Diagnostics</option>
+              <option>Brake Repair</option>
+              <option>General Checkup</option>
+            </select>
+            <button type="submit" class="btn btn-primary">
+              Confirm Booking
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

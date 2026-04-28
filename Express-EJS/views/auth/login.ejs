@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Login</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <section class="auth-section">
+      <div class="container auth-container">
+        <div class="auth-card">
+          <h2>Customer Login</h2>
+          <p class="auth-subtitle">Log in to track your bookings and manage your car services.</p>
+
+          <% if (error) { %>
+          <p class="auth-error"><%= error %></p>
+          <% } %>
+
+          <% if (message) { %>
+          <p class="auth-success"><%= message %></p>
+          <% } %>
+
+          <form action="/login" method="POST" class="auth-form">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value="<%= formData && formData.email ? formData.email : '' %>"
+              required
+            />
+            <input type="password" name="password" placeholder="Password" required />
+            <div class="auth-option-row">
+              <label class="auth-remember-label">
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  <%= formData && formData.rememberMe ? 'checked' : '' %>
+                />
+                Remember me
+              </label>
+              <a href="/forgot-password" class="auth-inline-link">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn auth-submit-btn">Login</button>
+          </form>
+
+          <p class="auth-switch">No account? <a href="/signup">Sign up</a></p>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

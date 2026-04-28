@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= service.name %> - Car Mantri</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .detail-container {
+        max-width: 1000px;
+        margin: 40px auto;
+      }
+      .detail-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+      .detail-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+      .detail-info h2 {
+        color: #22d3ee;
+        font-size: 2rem;
+        margin: 0 0 16px;
+      }
+      .detail-info p {
+        color: #cbd5e1;
+        line-height: 1.8;
+        margin-bottom: 16px;
+      }
+      .added-by {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px 0;
+      }
+      .added-by label {
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+      .added-by p {
+        margin: 4px 0 0;
+        color: #e2e8f0;
+      }
+      .btn-book {
+        background: #22d3ee;
+        color: #0f172a;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 16px;
+        display: inline-block;
+        text-decoration: none;
+      }
+      .btn-book:hover {
+        background: #67e8f9;
+      }
+      @media (max-width: 768px) {
+        .detail-header {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <div class="detail-container">
+      <div class="detail-header">
+        <img
+          src="<%= service.image %>"
+          alt="<%= service.name %>"
+          class="detail-image"
+        />
+        <div class="detail-info">
+          <h2><%= service.name %></h2>
+          <% if (service.price !== undefined && service.price !== null) { %>
+            <p style="font-size: 1.1rem; font-weight: 700; color: #fbbf24; margin-bottom: 10px;">
+              Price: INR <%= Number(service.price).toLocaleString('en-IN') %>
+            </p>
+          <% } %>
+          <p><%= service.description %></p>
+
+          <div class="added-by">
+            <label>Added By</label>
+            <p><%= service.addedBy.name %></p>
+            <p style="font-size: 14px; color: #94a3b8">
+              <%= service.addedBy.email %>
+            </p>
+          </div>
+
+          <a href="/bookservice/<%= service._id %>" class="btn-book"
+            >Book This Service</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <%- include("../partials/loginModal") %>
+  </body>
+</html>

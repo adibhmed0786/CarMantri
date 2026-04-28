@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Services - Car Mantri</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include("partials/navbar") %>
+
+    <section>
+      <div class="container">
+        <h2>Our Services</h2>
+        <p class="section-text">
+          We provide complete automotive care including diagnostics, engine
+          repairs, brake service, tire replacement, oil changes, and emergency
+          support.
+        </p>
+
+        <%- include("partials/table", { rows: services }) %>
+
+        <a href="/bookservice" class="btn btn-primary">BookService</a>
+      </div>
+    </section>
+  </body>
+</html>
