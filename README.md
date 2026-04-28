@@ -29,6 +29,20 @@ That flow is reflected in the routes, controllers, and views inside the app.
 - Super admin dashboard for managing admin credentials.
 - JSON API endpoints for service and feedback data.
 
+## Screenshots
+
+Add a few screenshots here once you have images from the app. The most useful ones are:
+
+- Home page
+- Services listing page
+- Service detail page
+- Booking form
+- User bookings page
+- Admin dashboard
+- Super admin dashboard
+
+These screenshots help new visitors understand the product faster than text alone.
+
 ## Tech Stack
 
 - Node.js
@@ -193,6 +207,8 @@ What each variable does:
 
 If `SESSION_SECRET` is missing, the app falls back to a default development secret, but you should still set a real one for proper deployments.
 
+You can also copy [Express-EJS/.env.example](Express-EJS/.env.example) as a starting point when setting up a new environment.
+
 ## Install and Run
 
 From the repository root:
@@ -217,6 +233,34 @@ npm run dev
 Then open:
 
 - http://localhost:3000
+
+## Deployment
+
+The app can be deployed on services like Render or Railway as a Node.js web service.
+
+### Render
+
+1. Create a new Web Service and connect your GitHub repository.
+2. Set the root directory to `Express-EJS` if the platform asks for one.
+3. Use `npm install` as the build command.
+4. Use `npm start` as the start command.
+5. Add the required environment variables from the `.env` file in the platform dashboard.
+6. Make sure MongoDB is reachable from the deployment environment, usually through MongoDB Atlas.
+
+### Railway
+
+1. Create a new project from your GitHub repository.
+2. Point Railway at the `Express-EJS` folder if needed.
+3. Add the same environment variables used locally.
+4. Confirm that the app starts with `npm start`.
+5. Connect Railway to a MongoDB Atlas database or another hosted MongoDB instance.
+
+### Deployment Notes
+
+- Keep `SESSION_SECRET`, `JWT_SECRET`, and `MONGO_URI` private.
+- Use a hosted MongoDB service for production.
+- Set the `PORT` environment variable only if your hosting provider requires it.
+- If you add image assets for the README screenshots section, place them in a stable folder and keep the paths relative.
 
 ## Package Scripts
 
